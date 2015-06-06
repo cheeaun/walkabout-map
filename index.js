@@ -21,7 +21,7 @@ request({
           var location = d.results[0].geometry.location;
           console.log('Result', location.lat, location.lng);
           val.lat = location.lat;
-          val.lng = location.lng;
+          val.long = location.lng;
           resolve(val);
         });
       } else {
@@ -35,8 +35,8 @@ request({
     var data = geojson.parse(points.map(function(point){
       return {
         name: point.companyName,
-        description: point.description,
         website: point.websiteURL,
+        address: point.address,
         lat: point.lat,
         lng: point.long
       }

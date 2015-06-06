@@ -19,11 +19,10 @@ header h1 a{
   color: #F7931E;
 }
 .info-window { max-width: 400px; overflow: auto; max-height: 320px; }
-.info-window h1 { font-size: 1em; }
-.info-window p { line-height: 1.5em; }
+.info-window h1, .info-window p { font-size: 1em; line-height: 1.5em; margin: 0; }
 </style>
 <header>
-  <h1>Walkabout Map, via <a href="http://www.walkabout.sg/">walkabout.sg</a></h1>
+  <h1>Walkabout Map, via <a href="http://www.walkabout.sg/" target="_blank">walkabout.sg</a></h1>
 </header>
 <div id="map-canvas"></div>
 <script src="https://maps.googleapis.com/maps/api/js?signed_in=true&key=AIzaSyDpk0BS7iLdbn5U545tiIN12k1OCgj2cc4"></script>
@@ -49,13 +48,11 @@ google.maps.event.addDomListener(window, 'load', function(){
   map.data.addListener('click', function(e){
     console.log(e);
     var feature = e.feature;
-    var description = feature.getProperty('description');
-    var desc = description.length > 140 ? (description.slice(0, 140) + '&hellip;') : description;
     var website = feature.getProperty('website');
     infoWindow.setContent('<div class="info-window">'
       + '<h1>' + feature.getProperty('name') + '</h1>'
-      + '<p title="' + description + '">' + desc + '</p>'
-      + '<p><a href="' + website + '">' + website + '</a></p>'
+      + '<p>' + feature.getProperty('address') + '</p>'
+      + '<p><a href="' + website + '" target="_blank">' + website + '</a></p>'
     + '</div>');
     infoWindow.setPosition(e.latLng);
     infoWindow.open(map);
