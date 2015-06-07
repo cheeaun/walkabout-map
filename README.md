@@ -3,6 +3,8 @@ Walkabout Map
 
 Map for all participating companies in [walkabout.sg](http://www.walkabout.sg/)
 
+Check it out at http://cheeaun.github.io/walkabout-map/ .
+
 ![](screenshot.png)
 
 Development
