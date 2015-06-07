@@ -8,12 +8,15 @@ request({
   json: true
 }, function(err, resp, body){
   var promises = [];
-  for (var key in body){
+  Object.keys(body).forEach(function(key){
     var val = body[key];
     var p = new Promise(function(resolve, reject){
-      if (val.long < 90){ // Invalid longitude!!!
+      if (val.long < 90 || /(uber|gigs|apvera|bonappetour)/i.test(key)){ // Only for those with invalid coords
+        if (/apvera/i.test(key)){
+          val.address = '1 Marina Boulevard #22-01, One Marina Boulevard, Singapore 018989';
+        }
         geocoder.geocode(val.address, function(e, d){
-          console.log('Geocoding', val.address);
+          console.log('Geocoding', key, val.address);
           if (e){
             console.log('FAIL', e);
             resolve(val);
@@ -29,7 +32,7 @@ request({
       }
     });
     promises.push(p);
-  }
+  });
 
   Promise.all(promises).then(function(points){
     var data = geojson.parse(points.map(function(point){
