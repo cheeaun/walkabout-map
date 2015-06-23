@@ -57,7 +57,7 @@ google.maps.event.addDomListener(window, 'load', function(){
     var website = feature.getProperty('website');
     infoWindow.setContent('<div class="info-window">'
       + '<h1>' + feature.getProperty('name') + '</h1>'
-      + '<p><a href="https://www.google.com.sg/maps/place/' + encodeURIComponent(addr) + '" target="_blank" class="addr">' + addr + '</a></p>'
+      + (addr ? ('<p><a href="https://www.google.com.sg/maps/place/' + encodeURIComponent(addr) + '" target="_blank" class="addr">' + addr + '</a></p>') : '')
       + '<p><a href="' + website + '" target="_blank">' + website + '</a></p>'
     + '</div>');
     infoWindow.setPosition(e.latLng);
