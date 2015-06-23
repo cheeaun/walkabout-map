@@ -11,10 +11,7 @@ request({
   Object.keys(body).forEach(function(key){
     var val = body[key];
     var p = new Promise(function(resolve, reject){
-      if (val.long < 90 || /(uber|gigs|apvera|bonappetour)/i.test(key)){ // Only for those with invalid coords
-        if (/apvera/i.test(key)){
-          val.address = '1 Marina Boulevard #22-01, One Marina Boulevard, Singapore 018989';
-        }
+      if (val.long < 90){ // Only for those with invalid coords
         geocoder.geocode(val.address, function(e, d){
           console.log('Geocoding', key, val.address);
           if (e){
