@@ -5,19 +5,28 @@
 <link rel="shortcut icon" href="http://www.walkabout.sg/favicon.ico">
 <style>
 html, body, #map-canvas { height: 100%; margin: 0; padding: 0; }
+header{
+  padding: .75em 1em;
+  position: absolute;
+  background-color: rgba(77,77,77,.8);
+  z-index: 1;
+  color: #F7931E;
+}
 header h1{
   font-family: Roboto, Arial, sans-serif;
   font-weight: normal;
-  position: absolute;
-  background-color: rgba(77,77,77,.9);
   font-size: 1em;
-  color: #F7931E;
-  padding: .75em 1em;
+  padding: 0;
   margin: 0;
-  z-index: 1;
 }
 header h1 a{
   color: #F7931E;
+}
+header button{
+  font-family: Roboto, Arial, sans-serif;
+  font-weight: normal;
+  font-size: .8em;
+  margin-top: .5em;
 }
 .info-window { max-width: 400px; overflow: auto; max-height: 320px; }
 .info-window h1, .info-window p { font-size: 1em; line-height: 1.5em; margin: 0; }
@@ -26,9 +35,10 @@ header h1 a{
 </style>
 <header>
   <h1>Walkabout Map, via <a href="http://www.walkabout.sg/neighbourhoodtours" target="_blank">walkabout.sg</a></h1>
+  <div><button id="toggle-heatmap">Toggle heatmap</button></div>
 </header>
 <div id="map-canvas"></div>
-<script src="https://maps.googleapis.com/maps/api/js?signed_in=true&key=AIzaSyDpk0BS7iLdbn5U545tiIN12k1OCgj2cc4"></script>
+<script src="https://maps.googleapis.com/maps/api/js?signed_in=true&key=AIzaSyDpk0BS7iLdbn5U545tiIN12k1OCgj2cc4&libraries=visualization"></script>
 <script>
 google.maps.event.addDomListener(window, 'load', function(){
   map = new google.maps.Map(document.getElementById('map-canvas'), {
@@ -37,18 +47,50 @@ google.maps.event.addDomListener(window, 'load', function(){
   });
   var transitLayer = new google.maps.TransitLayer();
   transitLayer.setMap(map);
-  map.data.loadGeoJson('sg-companies.geojson');
+
+  var icon = {
+    path: google.maps.SymbolPath.CIRCLE,
+    fillColor: '#ff5722',
+    fillOpacity: .8,
+    strokeColor: '#fff',
+    strokeWeight: 2,
+    scale: 5
+  };
+  var fadedIcon = {
+    path: google.maps.SymbolPath.CIRCLE,
+    fillColor: '#ff5722',
+    fillOpacity: .1,
+    strokeColor: '#fff',
+    strokeWeight: 2,
+    strokeOpacity: .05,
+    scale: 5
+  };
+
+  map.data.loadGeoJson('sg-companies.geojson', null, function(){
+    var coordinates = [];
+    console.log('loaded');
+    map.data.forEach(function(feature){
+      var coordinate = feature.getGeometry().get();
+      coordinates.push(coordinate);
+    });
+    var pointArray = new google.maps.MVCArray(coordinates);
+    var heatmap = new google.maps.visualization.HeatmapLayer({
+      data: pointArray,
+      radius: 30
+    });
+
+    document.getElementById('toggle-heatmap').addEventListener('click', function(){
+      var isMapHeated = heatmap.getMap();
+      heatmap.setMap(isMapHeated ? null : map);
+      map.data.setStyle({
+        icon: isMapHeated ? icon : fadedIcon
+      });
+    }, false);
+  });
 
   var infoWindow = new google.maps.InfoWindow();
   map.data.setStyle({
-    icon: {
-      path: google.maps.SymbolPath.CIRCLE,
-      fillColor: '#ff5722',
-      fillOpacity: .8,
-      strokeColor: '#fff',
-      strokeWeight: 2,
-      scale: 5
-    }
+    icon: icon
   });
   map.data.addListener('click', function(e){
     console.log(e);
